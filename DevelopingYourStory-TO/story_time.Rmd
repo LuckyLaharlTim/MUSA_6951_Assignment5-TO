@@ -1,0 +1,84 @@
+---
+title: "Story Time"
+author: "Timothy Oliver"
+date: "2023-11-07"
+output: 
+  html_document:
+  toc: TRUE
+  toc_float: TRUE
+  code-folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning=F,message=F,results='hide')
+```
+
+```{r libraries,include=F}
+if (length(ls())>0){rm(list=ls())}
+
+local({
+  hook_output <- knitr::knit_hooks$get('output')
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (!is.null(options$max.height)) options$attr.output <- c(
+      options$attr.output,
+      sprintf('style="max-height: %s;"', options$max.height)
+    )
+    hook_output(x, options)
+  })
+})
+
+library(sf)
+library(ggplot2)
+library(viridis)
+library(dplyr) # needed for ntile or using q5
+library(spdep)
+library(spgwr)
+library(tmap)
+library(tseries)
+library(stargazer)
+library(summarytools)
+library(stargazer)
+library(tidyverse)
+library(tidycensus)
+library(packcircles)
+library(ggiraph)
+library(ggalt)
+library(tigris)
+library(knitr)
+
+
+
+# functions and data directory
+root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+
+
+source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+# source("functions/quantileBreaks.r")
+source("D:/timol/Grad_School/plotTheme_TO.r")
+
+palette2 <- c("#981FAC","#FF006A")
+palette5 <- c("#25CB10", "#5AB60C", "#8FA108",   "#C48C04", "#FA7800")
+palette5a <- c("#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c")
+palette4a <- c("#D2FBD4","#92BCAB","#527D82","#123F5A")
+palette2a <- c("#6baed6","#08519c")
+
+palette9 <- viridis(9)
+
+options(scipen=999)
+```
+
+```{r data_stuff}
+pop_githubs <- read.csv("../../MUSA_6951_Assignment3-TO/HW3_theme_and_graphs/data/repositories.csv")
+pop_githubs$Language[pop_githubs$Language==""]<-"No Language"
+# table(pop_githubs$Language)
+
+sort(table(pop_githubs$Language))
+top_10_lang<-c("Python","JavaScript","No Language","Java","TypeScript","C++","Go","C","C#","PHP")
+repos_in10Lang<-pop_githubs[pop_githubs$Language %in% top_10_lang,]
+```
+
+# Audience/Message Planning
+
+# The Story
+
+# What Can We Do?
