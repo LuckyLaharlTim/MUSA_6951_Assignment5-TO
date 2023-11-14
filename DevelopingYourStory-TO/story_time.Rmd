@@ -45,6 +45,8 @@ library(ggiraph)
 library(ggalt)
 library(tigris)
 library(knitr)
+library(httr)
+library(jsonlite)
 
 
 
@@ -79,6 +81,79 @@ repos_in10Lang<-pop_githubs[pop_githubs$Language %in% top_10_lang,]
 
 # Audience/Message Planning
 
+* What is the company I am working/proposing for?
+  - Who within it am I writing to?
+    - CEO
+    - head of hiring
+    - head of communications
+  - Why do they want new visualizations?
+    - new company
+      - new primary stockholder/leadership, etc.
+    - simple fancy of leadership
+    - expressed need for specific project(s)
+  - How long do we expect the recommendation to take?
+    - length of training...   6-12 months for confident/seamless integration
+    - hiring...   2-3 hiring cycles (say every 3 months so 6-9 months)
+    
+    
+
 # The Story
 
-# What Can We Do?
+As our company moves to a focus on creating project dashboards and visualizations for team and stockholder meetings, there has been difficulty in assessing the abilities of new potential hires. I propose increasing the company's awareness of Github in two sections...
+
+1. Requiring Human Resources to... 
+    - verify applicants' related Github projects
+    - encourage applicable departments to review work and reproducibility
+2. Encouraging various departments to use Github (or relevant source control) to create and distribute visualization templates across the company.
+
+Improved use of source control in the company's hiring and work practices will solve current and future visualization challenges.
+
+## What should we look for?
+
+* Hiring
+  -   consider importance of python and javascript
+      -   python for data manipulation and exploration
+      -   python support via libraries
+      -   javascript for frontend visualizations and final products
+  -   Github popularity of python and javascript
+      -   shows general user support for these languages outweighs others
+      -   would not severely diminish pool of potential workers
+      -   new hires likely to be proficient or exposed to these languages
+
+```{r plot}
+# x_tick_labs<- names(table(repos_in10Lang$Language))
+# reorder(x_tick_labs,x_tick_labs,function(x)-length(x))
+x_tick_labs<-c("Python","JS","No Language","Java","TypeScript","C++","Go","C","C","PHP")
+
+# plot of most common by language and count
+p <- ggplot(data = repos_in10Lang,
+            mapping = aes(x=reorder(Language,Language,function(x)-length(x))))+
+  geom_bar(fill="beige",color="skyblue",linewidth=1)+
+  geom_bar(data=repos_in10Lang[(repos_in10Lang$Language=="Python")|(repos_in10Lang$Language=="JavaScript"),],fill="orange")+
+  geom_text(aes(label=..count..),stat="count",color="brown",hjust=1.5)+
+  labs(x="Primary Coding Language",
+       y= "Repository Count",
+       title = "Python and JavaScript Lead the Pack",
+       subtitle = "as the primary coding language of Popular Github Repositories",
+       caption = "Source: Kaggle,\n10/1/2023 | Canard")+theme_test()+coord_flip()# adding +scale_x_discrete(x_tick_labs) did 
+
+# display plot
+p
+```
+
+*   Number or Ratio of Github users per location/state
+      -   data retrieved from Github API and shows (greater/lower) proportion of users in Pennsylvania than elsewhere
+      -   further thoughts after development
+
+```{r gitAPI, include=T,echo=T}
+## Get the state names and place results of the following in a dataframe for reference
+### divide total count by population and make grad-symbol map or similar plot/map 
+
+state <- tolower("Pennsylvania")
+stateUser <- fromJSON(rawToChar((GET(paste("https://api.github.com/search/users?q=location:",state,sep=""))$content)))$total_count
+```
+
+# Recommendation
+
+* Any follow-up thoughts from supporting charts and research.
+* Restate Big Idea: `Improved use of source control in the company's hiring and work practices will solve current and future visualization challenges.`
