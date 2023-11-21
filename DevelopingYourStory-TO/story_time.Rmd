@@ -10,7 +10,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning=F,message=F,results='hide')
+knitr::opts_chunk$set(warning=F,message=F)
 ```
 
 ```{r libraries,include=F}
@@ -69,8 +69,8 @@ palette9 <- viridis(9)
 options(scipen=999)
 ```
 
-```{r data_stuff}
-pop_githubs <- read.csv("../../MUSA_6951_Assignment3-TO/HW3_theme_and_graphs/data/repositories.csv")
+```{r data_stuff,results='hide'}
+pop_githubs <- read.csv("data/repositories.csv")
 pop_githubs$Language[pop_githubs$Language==""]<-"No Language"
 # table(pop_githubs$Language)
 
