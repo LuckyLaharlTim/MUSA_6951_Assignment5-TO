@@ -1,12 +1,12 @@
 ---
-title: "Story Time"
+title: "Hiring Quality Visualizers with GitHub"
 author: "Timothy Oliver"
 date: "2023-11-07"
 output: 
   html_document:
-  toc: TRUE
-  toc_float: TRUE
-  code-folding: hide
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -51,10 +51,10 @@ library(jsonlite)
 
 
 # functions and data directory
-root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+root.dir = "https://raw.GitHubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 
 
-source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+source("https://raw.GitHubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
 # source("functions/quantileBreaks.r")
 source("D:/timol/Grad_School/plotTheme_TO.r")
 
@@ -70,55 +70,32 @@ options(scipen=999)
 ```
 
 ```{r data_stuff,results='hide'}
-pop_githubs <- read.csv("data/repositories.csv")
-pop_githubs$Language[pop_githubs$Language==""]<-"No Language"
-# table(pop_githubs$Language)
+pop_GitHubs <- read.csv("data/repositories.csv")
+pop_GitHubs$Language[pop_GitHubs$Language==""]<-"No Language"
+# table(pop_GitHubs$Language)
 
-sort(table(pop_githubs$Language))
+sort(table(pop_GitHubs$Language))
 top_10_lang<-c("Python","JavaScript","No Language","Java","TypeScript","C++","Go","C","C#","PHP")
-repos_in10Lang<-pop_githubs[pop_githubs$Language %in% top_10_lang,]
+repos_in10Lang<-pop_GitHubs[pop_GitHubs$Language %in% top_10_lang,]
 ```
 
-# Audience/Message Planning
+# The Problem
 
-* What is the company I am working/proposing for?
-  - Who within it am I writing to?
-    - CEO
-    - head of hiring
-    - head of communications
-  - Why do they want new visualizations?
-    - new company
-      - new primary stockholder/leadership, etc.
-    - simple fancy of leadership
-    - expressed need for specific project(s)
-  - How long do we expect the recommendation to take?
-    - length of training...   6-12 months for confident/seamless integration
-    - hiring...   2-3 hiring cycles (say every 3 months so 6-9 months)
-    
-    
-
-# The Story
-
-As our company moves to a focus on creating project dashboards and visualizations for team and stockholder meetings, there has been difficulty in assessing the abilities of new potential hires. I propose increasing the company's awareness of Github in two sections...
+The level and detail of Intriguing Journalism's internal media has been suffering a decline with our workforce remaining the same as during the pandemic. As our data journal company moves to hire more employees, you have stated a focus on creating project dashboards and visualizations for team and stockholder meetings. There has unfortunately been difficulty in assessing the abilities of new potential hires. I propose increasing the company's awareness of GitHub as a tool for hiring quality individuals in two sections...
 
 1. Requiring Human Resources to... 
-    - verify applicants' related Github projects
+    - verify applicants' related GitHub projects
     - encourage applicable departments to review work and reproducibility
-2. Encouraging various departments to use Github (or relevant source control) to create and distribute visualization templates across the company.
+2. Encouraging various departments to use GitHub (or relevant source control) to create and distribute visualization templates across the company.
 
 Improved use of source control in the company's hiring and work practices will solve current and future visualization challenges.
 
-## What should we look for?
+# Finding Talent with GitHub
 
-* Hiring
-  -   consider importance of python and javascript
-      -   python for data manipulation and exploration
-      -   python support via libraries
-      -   javascript for frontend visualizations and final products
-  -   Github popularity of python and javascript
-      -   shows general user support for these languages outweighs others
-      -   would not severely diminish pool of potential workers
-      -   new hires likely to be proficient or exposed to these languages
+GitHub not only provides a convenient method for viewing the work of applicants have worked on in the past, but also gives a glimpse into their team work style and specific code. Beyond this, the growth of the platform has enabled more features for recruitment such as [GitHub Topics recruiting page](https://github.com/topics/recruiting) where open technical positions or advice and advice can be posted. 
+
+But what should we exactly be looking for? We have quite a number of employees experienced in Python and TypeScript. Provided that our visualizations are often shared in a web-based form, JavaScript would be a useful addition that should be a target skill for future hires. The [most frequented repositories from October 2023](https://www.kaggle.com/datasets/donbarbos/github-repos/download?datasetVersionNumber=4) offer some key insights into GitHub users and topics which can also be compared to our needs for those well-versed in data visualization. 
+
 
 ```{r plot}
 # x_tick_labs<- names(table(repos_in10Lang$Language))
@@ -134,26 +111,71 @@ p <- ggplot(data = repos_in10Lang,
   labs(x="Primary Coding Language",
        y= "Repository Count",
        title = "Python and JavaScript Lead the Pack",
-       subtitle = "as the primary coding language of Popular Github Repositories",
+       subtitle = "as the primary coding language of Popular GitHub Repositories",
        caption = "Source: Kaggle,\n10/1/2023 | Canard")+theme_test()+coord_flip()# adding +scale_x_discrete(x_tick_labs) did 
 
 # display plot
 p
 ```
 
-*   Number or Ratio of Github users per location/state
-      -   data retrieved from Github API and shows (greater/lower) proportion of users in Pennsylvania than elsewhere
-      -   further thoughts after development
+Of the ten most popular coding languages, Python and JavaScript are far and away the most popular preceding Java, TypeScript, and a sizable number of resource driven repositories with no code. Considering that this chart showcases the number of repositories rather than contributing users, it is entirely possible that many times this number of people with JavaScript experience actively use GitHub. Likewise, the high portion of Python users would integrate well with our current workforce and have potential knowledge of libraries supporting features between the two languages.
 
-```{r gitAPI, include=T,echo=T}
+The GitHub API also provides up-to-date information about users at the point in time one queries it. The following map displays results from a simple query of active GitHub users in each state alongside the percentage of Pennsylvania users to successfully retrieved total across the U.S.
+
+```{r gitAPI, include=T,echo=T,results='hide'}
+us_area <- get_decennial(
+  geography = "state",
+  year = 2010,
+  variables = "P001001",
+  geometry = T) %>% st_transform("EPSG:3665") %>%
+  filter(NAME != "Puerto Rico")
+
+# cont_us_area <- us_area %>%
+#   filter(NAME != "Alaska" & NAME != "Hawaii" & NAME != "Puerto Rico")
+
+stateUsers = c()
+
 ## Get the state names and place results of the following in a dataframe for reference
 ### divide total count by population and make grad-symbol map or similar plot/map 
+#### Puerto Rico has space, so we won't use it (also territory)
 
-state <- tolower("Pennsylvania")
-stateUser <- fromJSON(rawToChar((GET(paste("https://api.github.com/search/users?q=location:",state,sep=""))$content)))$total_count
+currentTime = strsplit(date(),strsplit(date()," ")[[1]][1])[[1]][2]
+
+for (state in us_area$NAME){
+    # prep
+  state <- tolower(gsub(" ","",state))
+  count <- fromJSON(rawToChar((GET(paste("https://api.GitHub.com/search/users?q=location:",state,sep=""))$content)))$total_count
+  
+   # sleep to minimize chance of NULL
+  if (length(stateUsers)%%8==0){
+  Sys.sleep(10)}
+  
+   # get counts
+  if (is.null(count)){
+    stateUsers <- c(stateUsers,NA)
+  }else{
+  stateUsers <- c(stateUsers,count)
+  }
+}
+
+us_area$userCount <- stateUsers
+rm(stateUsers,count)
+totalCount=sum(us_area$userCount,na.rm=T)
+
 ```
+
+```{r map}
+ggplot(data = us_area %>% filter(NAME != "Alaska" & NAME != "Hawaii"))+
+  geom_sf(aes(fill=userCount),color="white")+
+  geom_sf(data = us_area %>% filter(NAME == "Pennsylvania"),aes(fill=userCount),color="#b7410e")+
+  scale_fill_binned()+
+  labs(title = paste("Active GitHub Users as of\n",currentTime))+
+  theme_test()+theme(axis.text.x=element_blank(),axis.text.y=element_blank())
+  
+```
+
+While the number of current users in Pennsylvania is not large compared to other states, nearby states like Ohio, Michigan, and Virginia at the time of the query have a higher count. Pennsylvania specifically makes up `r paste(round((us_area[us_area$NAME=="Pennsylvania",]$userCount/totalCount)*100,2),"%")` of GitHub users in the U.S. data gathered. While our target audience for technical recruitment should not focus only on GitHub users, the tools the platform offers is promising with potential for adept hires to share their know-how in the workplace and improving collaboration.
 
 # Recommendation
 
-* Any follow-up thoughts from supporting charts and research.
-* Restate Big Idea: `Improved use of source control in the company's hiring and work practices will solve current and future visualization challenges.`
+With the offered insights from popular GitHub repositories and the GitHub API itself, I highly recommend incorporating GitHub reviews into the hiring process. The potential the platform offers in bridging the hiring department and the specific department with an open position is apparent, and GitHub also has a large number of users that are experienced in the JavaScript we need. Utilizing GitHub Topics to reach out to users specifically is a specific approach we can adopt to speed along this process, but closer attention to platform use in our applicants is the core to solving current and future visualization challenges through improved use of source control in the company's hiring and work practices.
